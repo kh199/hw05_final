@@ -31,8 +31,9 @@ class CacheTest(TestCase):
     def test_cache_index_page(self):
         """Проверка кеширования главной страницы"""
         response = self.client.get(reverse('posts:index'))
+        Post.objects.filter(id=self.post.id).exists()
         Post.objects.get(id=self.post.id).delete()
-        self.assertContains(response, self.post.text)
+        self.assertTrue(self.post.text.encode() in response.content)
         cache.clear()
         response = self.client.get(reverse('posts:index'))
-        self.assertNotContains(response, self.post.text)
+        self.assertFalse(self.post.text.encode() in response.content)

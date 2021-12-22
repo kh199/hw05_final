@@ -71,12 +71,12 @@ class PostCreateFormTests(TestCase):
                              reverse('posts:profile',
                                      kwargs={'username': self.user.username}))
         self.assertEqual(Post.objects.count(), posts_count + 1)
-        post_id = Post.objects.get(text=form_data['text']).id
+        last_object = response.context['page_obj'][0]
+        self.assertEqual(last_object.text, form_data['text'])
         self.assertTrue(
             Post.objects.filter(
                 text=form_data['text'],
-                id=post_id,
-                image='posts/small.gif'
+                image=last_object.image
             ).exists()
         )
 
@@ -219,3 +219,9 @@ class PostCreateFormTests(TestCase):
         self.assertEqual(response.status_code, HTTPStatus.OK)
         self.assertEqual(Comment.objects.count(), comment_count + 1)
         self.assertEqual(last_comment.text, form_data['text'])
+        self.assertTrue(
+            Comment.objects.filter(
+                text=form_data['text'],
+                post_id=self.post.id
+            ).exists()
+        )
