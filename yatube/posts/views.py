@@ -7,13 +7,9 @@ from .utils import get_paginator
 
 
 def index(request):
-    context = {
-        'index': True,
-    }
-    context.update(get_paginator(
+    context = get_paginator(
         Post.objects.select_related('group').all(),
         request)
-    )
     return render(request, 'posts/index.html', context)
 
 
@@ -108,13 +104,9 @@ def add_comment(request, post_id):
 
 @login_required
 def follow_index(request):
-    context = {
-        'follow': True,
-    }
-    context.update(get_paginator(
+    context = get_paginator(
         Post.objects.filter(author__following__user=request.user),
         request)
-    )
     return render(request, 'posts/follow.html', context)
 
 

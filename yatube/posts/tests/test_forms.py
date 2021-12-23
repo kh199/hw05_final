@@ -73,11 +73,8 @@ class PostCreateFormTests(TestCase):
         self.assertEqual(Post.objects.count(), posts_count + 1)
         last_object = response.context['page_obj'][0]
         self.assertEqual(last_object.text, form_data['text'])
-        self.assertTrue(
-            Post.objects.filter(
-                text=form_data['text'],
-                image=last_object.image
-            ).exists()
+        self.assertTrue(last_object.image.name.endswith(
+            form_data['image'].name)
         )
 
     def test_create_post_without_group(self):
@@ -219,9 +216,4 @@ class PostCreateFormTests(TestCase):
         self.assertEqual(response.status_code, HTTPStatus.OK)
         self.assertEqual(Comment.objects.count(), comment_count + 1)
         self.assertEqual(last_comment.text, form_data['text'])
-        self.assertTrue(
-            Comment.objects.filter(
-                text=form_data['text'],
-                post_id=self.post.id
-            ).exists()
-        )
+        self.assertEqual(last_comment.post.id, self.post.id)

@@ -35,13 +35,12 @@ class FollowViewsTests(TestCase):
         self.assertEqual(Follow.objects.count(), follow_count + 1)
         self.assertTrue(Follow.objects.filter(
             user=self.user, author=author
-        ).exists)
+        ).exists())
 
     def test_autorized_user_can_unfollow(self):
         """Пользователь может отписываться от авторов"""
         author = FollowViewsTests.user
-        self.authorized_client.get(reverse('posts:profile_follow',
-                                   kwargs={'username': author.username}))
+        Follow.objects.create(user=self.user, author=author)
         follow_count = Follow.objects.count()
         response = (self.authorized_client.
                     get(reverse('posts:profile_unfollow',
@@ -63,7 +62,7 @@ class FollowViewsTests(TestCase):
         self.assertEqual(Follow.objects.count(), follow_count + 1)
         self.assertTrue(Follow.objects.filter(
             user=self.user, author=author
-        ).exists)
+        ).exists())
         follow_count = Follow.objects.count()
         response = (self.authorized_client.
                     get(reverse('posts:profile_follow',
@@ -72,7 +71,7 @@ class FollowViewsTests(TestCase):
         self.assertEqual(Follow.objects.count(), follow_count)
         self.assertTrue(Follow.objects.filter(
             user=self.user, author=author
-        ).exists)
+        ).exists())
 
     def test_autorized_user_cant_follow_yourself(self):
         """Нельзя подписаться на самого себя"""
